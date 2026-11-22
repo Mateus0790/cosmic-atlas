@@ -164,8 +164,8 @@ export const CosmicScene: React.FC<SceneProps> = ({
       <ColorAttachments>
         <Environment
           background={false}
-          files={['/textures/environment/px.png', '/textures/environment/nx.png', '/textures/environment/py.png', '/textures/environment/ny.png', '/textures/environment/pz.png', '/textures/environment/nz.png']}
-          path="/textures/environment/"
+          files={['textures/environment/px.png', 'textures/environment/nx.png', 'textures/environment/py.png', 'textures/environment/ny.png', 'textures/environment/pz.png', 'textures/environment/nz.png']}
+          path="textures/environment/"
         />
         <Stars radius={1e6} depth={100} factor={100} saturation={0.5} />
         {children}
@@ -213,12 +213,12 @@ export const Earth: React.FC<EarthProps> = ({
   const { scene, clock } = useThree();
 
   // Load textures
-  const dayTexture = useTexture('/textures/earth/day.jpg');
-  const nightTexture = useTexture('/textures/earth/night.jpg');
-  const specularTexture = useTexture('/textures/earth/specular.jpg');
-  const normalTexture = useTexture('/textures/earth/normal.jpg');
-  const cloudTexture = useTexture('/textures/earth/clouds.png');
-  const elevationTexture = useTexture('/textures/earth/elevation.jpg');
+  const dayTexture = useTexture('textures/earth/day.jpg');
+  const nightTexture = useTexture('textures/earth/night.jpg');
+  const specularTexture = useTexture('textures/earth/specular.jpg');
+  const normalTexture = useTexture('textures/earth/normal.jpg');
+  const cloudTexture = useTexture('textures/earth/clouds.png');
+  const elevationTexture = useTexture('textures/earth/elevation.jpg');
 
   // Earth mesh
   const earthGeometry = useMemo(
