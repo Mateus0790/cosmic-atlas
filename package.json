@@ -1,0 +1,77 @@
+{
+  "name": "cosmic-atlas",
+  "version": "0.1.0",
+  "description": "Open-source interactive 3D atlas of the known universe, powered by scientific astronomical data.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:preview": "npm run build && vite preview",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "preview": "vite preview",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "astronomy",
+    "3d",
+    "visualization",
+    "webgl",
+    "threejs",
+    "react",
+    "space",
+    "satellites",
+    "solar-system",
+    "stars",
+    "galaxies",
+    "cosmology"
+  ],
+  "author": "Mateus0790",
+  "license": "MIT",
+  "homepage": "https://github.com/Mateus0790/cosmic-atlas#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mateus0790/cosmic-atlas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mateus0790/cosmic-atlas/issues"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "@react-three/postprocessing": "^3.2.2",
+    "@types/three": "^0.187.0",
+    "axios": "^1.21.1",
+    "canvas": "^3.2.3",
+    "date-fns": "^4.4.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-hot-toast": "^2.6.1",
+    "sgp4": "^1.0.10",
+    "three": "^0.187.0",
+    "three-stdlib": "^2.36.1",
+    "zustand": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.15.0",
+    "husky": "^9.1.7",
+    "oxlint": "^1.90.0",
+    "prettier": "^3.10.1",
+    "typescript": "~7.0.2",
+    "typescript-eslint": "^8.73.0",
+    "vite": "^8.3.6",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
