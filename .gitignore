@@ -46,11 +46,9 @@ coverage/
 vite.config.ts.timestamp-*
 .vite/
 
-# Test
-*.test.ts
-*.test.tsx
-*.spec.ts
-*.spec.tsx
+# Test artifacts (keep source test files)
+coverage/
+.nyc_output/
 
 # Temporary files
 *.tmp
