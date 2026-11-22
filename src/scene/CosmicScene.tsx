@@ -115,7 +115,7 @@ export const AstronomicalControls: React.FC<AstronomicalControlsProps> = ({
 
     return () => {
       controls.dispose();
-      controlsRef.current = undefined;
+      controlsRef.current = null;
     };
   }, [camera, enableKeys, enablePan, enableZoom, enableRotate, minDistance, maxDistance, onChange]);
 

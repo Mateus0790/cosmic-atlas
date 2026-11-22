@@ -4,7 +4,10 @@
  */
 
 import type { Vector3D, OrbitalElements, AstronomicalTime, CelestialObject } from '../types';
-import { sgp4, twoline2satrec, gstime } from 'sgp4';
+import SGP4Module from 'sgp4';
+const sgp4 = SGP4Module.sgp4;
+const twoline2satrec = SGP4Module.twoline2rv;
+const gstime = SGP4Module.gstime;
 import {
   AU_METERS,
   SECONDS_PER_DAY,
@@ -48,22 +51,23 @@ export interface TLEData {
  * Parse TLE lines into structured data
  */
 export function parseTLE(line1: string, line2: string, name?: string): TLEData {
-  const satrec = twoline2satrec(line1, line2);
+  const grav = SGP4Module.getgravconst('wgs72');
+  const satrec = twoline2satrec(line1, line2, grav);
 
   return {
     line1,
     line2,
     name,
-    noradId: satrec.satnum,
-    internationalDesignator: satrec.intldesg,
-    classification: satrec.classification,
-    epoch: satrec.epoch,
-    epochYear: satrec.epochyr,
-    epochDay: satrec.epochdays,
-    bstar: satrec.bstar,
-    meanMotion: satrec.no,
-    meanMotionDot: satrec.ndot,
-    meanMotionDDot: satrec.nddot,
+    noradId: parseInt(satrec.satnum, 10) || 0,
+    internationalDesignator: satrec.intldesg || '',
+    classification: satrec.classification || 'U',
+    epoch: satrec.epoch || new Date(),
+    epochYear: satrec.epochyr || 0,
+    epochDay: satrec.epochdays || 0,
+    bstar: satrec.bstar || 0,
+    meanMotion: satrec.no || 0,
+    meanMotionDot: satrec.ndot || 0,
+    meanMotionDDot: satrec.nddot || 0,
   };
 }
 
@@ -216,21 +220,26 @@ export function getGroundTrack(
  * Solve Kepler's equation: M = E - e*sin(E)
  * Returns eccentric anomaly E in radians
  */
-export function solveKepler(M: number, e: number): number {
+export function solveKepler(M: number, e: number, maxIterations: number = 100): number {
   if (e < 1e-12) return M; // Circular orbit
 
   let E = M; // Initial guess
+  if (e > 0.8) {
+    E = Math.PI;
+  }
   const tolerance = 1e-12;
   let delta = 1;
+  let iter = 0;
 
-  // Newton-Raphson iteration
-  while (Math.abs(delta) > tolerance) {
+  // Newton-Raphson iteration with iteration limit
+  while (Math.abs(delta) > tolerance && iter < maxIterations) {
     const sinE = Math.sin(E);
     const cosE = Math.cos(E);
     const f = E - e * sinE - M;
     const fp = 1 - e * cosE;
     delta = f / fp;
     E -= delta;
+    iter++;
   }
 
   return E;
@@ -471,17 +480,43 @@ export async function fetchHorizonsEphemeris(
  */
 function parseHorizonsJson(jsonText: string): EphemerisData | null {
   try {
-    // Horizons JSON format has data embedded in result string
-    const parsed = JSON.parse(jsonText);
-    // Implementation depends on exact JSON structure returned
-    // This is a simplified parser
+    const parsed = typeof jsonText === 'string' ? JSON.parse(jsonText) : jsonText;
+    
+    // JPL Horizons API JSON output structure usually contains result or data lines
+    // If result contains text table or JSON array, handle accordingly
+    if (parsed.result) {
+      return parseHorizonsText(parsed.result);
+    }
+
+    // If it's structured data directly
+    const data: EphemerisData['data'] = [];
+    if (Array.isArray(parsed.data)) {
+      for (const entry of parsed.data) {
+        data.push({
+          jd: entry.jd || 0,
+          calendarDate: entry.date || '',
+          ra: entry.RA || 0,
+          dec: entry.DEC || 0,
+          delta: entry.delta || 0,
+          deldot: entry.deldot || 0,
+          hl: entry.hl || 0,
+          hb: entry.hb || 0,
+          hr: entry.hr || 0,
+          hrdot: entry.hrdot || 0,
+          ol: entry.ol || 0,
+          ob: entry.ob || 0,
+        });
+      }
+    }
+
     return {
-      target: '',
-      center: '',
-      refFrame: '',
-      data: [],
+      target: parsed.target || '',
+      center: parsed.center || '',
+      refFrame: parsed.refFrame || 'J2000',
+      data,
     };
-  } catch {
+  } catch (error) {
+    console.error('Error parsing JPL Horizons JSON:', error);
     return null;
   }
 }
